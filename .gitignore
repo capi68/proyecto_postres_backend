@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+*.out
+*.err
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database
+*.sqlite
+*.db
+
+# Sequelize migrations temp files
+migrations/*.js.map
+seeders/*.js.map
+
+# Build / coverage
+coverage/
+dist/
+tmp/
+.cache/
+
+# IDE / OS
+.vscode/
+.DS_Store
+*.swp
