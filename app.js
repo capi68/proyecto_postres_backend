@@ -17,7 +17,7 @@ app.use("/cart", require("./routes/cartRoutes"));
 //synchronize DB on startup (only development/test)
 
 db.sequelize.sync()
-.then(() => console-log("DB synchronized"))
+.then(() => console.log("DB synchronized"))
 .catch(err => console.error("Error al sincronizar DB", err));
 
 module.exports = app;
