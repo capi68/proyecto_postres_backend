@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const { where } = require("sequelize");
+const authMiddleware = require("../middleware/auth");
 
 //=========================
 // CRUD "/"
@@ -32,7 +33,7 @@ router.post("/", async(req, res) => {
 
 //GET "/:userId" >>> get itemcart from User
 
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", authMiddleware, async (req, res) => {
     try {
         const { userId } = req.params;
 
