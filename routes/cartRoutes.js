@@ -11,7 +11,7 @@ const authMiddleware = require("../middleware/auth");
 // POST >> add product to the cart
 router.post("/", authMiddleware,  async(req, res) => {
     try {
-        const userId = req.user.id
+        const userId = req.user.id //TOKEN
         const { productId, quantity } = req.body;
 
         // Check if it is already in the cart
@@ -33,6 +33,7 @@ router.post("/", authMiddleware,  async(req, res) => {
     }
 });
 
+
 //GET "/" empty cart
 router.get("/", async(req, res) => {
     res.json({ message: "empty cart..." });
@@ -42,7 +43,12 @@ router.get("/", async(req, res) => {
 
 router.get("/:userId", authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id;
+        const { userId } = req.params;
+
+        //Mayor security
+        if (parseInt(userId) !== req.user.id) {
+            return res.status(403).json({ error: "Access denied"});
+        }
 
         const cartItems = await db.CartItem.findAll({
             where: { userId },
@@ -61,6 +67,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
     }
 });
 
+
 //PUT "/:id" >>> update quantity of a specific cartItem
 router.put("/:id", authMiddleware, async (req, res) => {
     try {
@@ -70,6 +77,11 @@ router.put("/:id", authMiddleware, async (req, res) => {
         const cartItem = await db.CartItem.findByPk(id);
         if (!cartItem) {
             return res.status(404).json({ error: "CartItem not found" });
+        }
+
+        //Mayor security
+        if (cartItem.userId !== req.user.id) {
+            return res.status(403).json({ error: "Access denied" });
         }
 
         cartItem.quantity = quantity;
@@ -82,6 +94,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 });
 
+
 // DELETE "/:id" >>> delete an icartItem from Cart
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
@@ -92,12 +105,19 @@ router.delete("/:id", authMiddleware, async (req, res) => {
             return res.status(404).json({ error: "CartItem not found" });
         }
 
+        //Mayor security
+        if(cartItem.userId !== req.user.id) {
+            return res.status(403).json({ error: "Access denied" });
+        }
+
         await cartItem.destroy();
         res.json({ message: "CartItem removed" });
-    } catch(error){
-        console.error("Error deleting cartItem:", error);
-        res.status(500).json({ error: "Error deleting CartItem..."});
-    }
+
+        } catch(error){
+            console.error("Error deleting cartItem:", error);
+            res.status(500).json({ error: "Error deleting CartItem..."});
+            }
 });
+
 
 module.exports = router;
