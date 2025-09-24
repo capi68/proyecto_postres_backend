@@ -9,9 +9,10 @@ const authMiddleware = require("../middleware/auth");
 //=========================
 
 // POST >> add product to the cart
-router.post("/", async(req, res) => {
+router.post("/", authMiddleware,  async(req, res) => {
     try {
-        const { userId, productId, quantity } = req.body;
+        const userId = req.user.id
+        const { productId, quantity } = req.body;
 
         // Check if it is already in the cart
         let cartItem = await db.CartItem.findOne({
@@ -20,6 +21,7 @@ router.post("/", async(req, res) => {
 
         if (cartItem) {
             cartItem.quantity += quantity;  //If it already exists, add one unit
+            await cartItem.save();
         } else {
             cartItem = await db.CartItem.create({ userId, productId, quantity }); //If no exist, generate Item
         }
@@ -31,11 +33,16 @@ router.post("/", async(req, res) => {
     }
 });
 
+//GET "/" empty cart
+router.get("/", async(req, res) => {
+    res.json({ message: "empty cart..." });
+})
+
 //GET "/:userId" >>> get itemcart from User
 
 router.get("/:userId", authMiddleware, async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
 
         const cartItems = await db.CartItem.findAll({
             where: { userId },
@@ -55,7 +62,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
 });
 
 //PUT "/:id" >>> update quantity of a specific cartItem
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const { quantity } = req.body;
@@ -76,7 +83,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE "/:id" >>> delete an icartItem from Cart
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const cartItem = await db.CartItem.findByPk(id);
