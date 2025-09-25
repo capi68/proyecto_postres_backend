@@ -2,16 +2,16 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 const authMiddleware = require("../middleware/auth");
-const { where } = require("sequelize");
-const orderitem = require("../models/orderitem");
+
+
 
 //POST orders/checkout
-router.post("/checkout", async(req, res) => {
+router.post("/checkout", authMiddleware, async(req, res) => {
     try {
         const userId = req.user.id;
 
         //get cartItem User
-        const cartItems = await db.cartItem.findAll({
+        const cartItems = await db.CartItem.findAll({
             where: { userId },
             include: [{model: db.Product, as: "product" }],
         });
@@ -43,7 +43,7 @@ router.post("/checkout", async(req, res) => {
         await db.OrderItem.bulkCreate(orderItemsData);
 
         //Empty Cart
-        await db.cartItem.destroy({where: { userId} });
+        await db.CartItem.destroy({where: { userId} });
 
         res.status(201).json({
             message: "order create succesfully",
