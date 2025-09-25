@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use("/products", require("./routes/productRoutes"));
 app.use("/users", require("./routes/userRoutes"));
 app.use("/cart", require("./routes/cartRoutes"));
+app.use("/orders", require("./routes/orderRoutes"));
 
 //synchronize DB on startup (only development/test)
 
