@@ -20,7 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.DECIMAL,
     image_desktop: DataTypes.STRING,
     image_tablet: DataTypes.STRING,
-    image_mobile: DataTypes.STRING
+    image_mobile: DataTypes.STRING,
+    active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    }
   }, {
     sequelize,
     modelName: 'Product',
