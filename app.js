@@ -2,8 +2,19 @@ const express = require("express");
 const bodyPrser = require("body-parser");
 const db = require("./models");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
+
+//////////////////////////////////////////////////////////////////////////////
+//ENHABLE CORS
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true
+}));
+
+////////////////////////////////////////////////////////////////////////////
 
 app.use(bodyParser.json());
 
