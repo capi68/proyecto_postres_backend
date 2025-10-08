@@ -53,8 +53,8 @@ router.post("/checkout", authMiddleware, async(req, res) => {
             orderItems: orderItemsData,
         });
     } catch(error) {
-        console.error("Checkout error:", error);
-        res.status(500).json({ error: "Error during checkout..."});
+        console.error("Checkout error details:", error);
+        res.status(500).json({ error: "Error during checkout...", details: error.message});
     }
 });
 

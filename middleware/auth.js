@@ -5,7 +5,7 @@ const authMiddleware = (req, res, next ) => {
 
         //read header authorization
         const authHeader = req.headers["authorization"];
-        if(!authHeader) return res.stattus(401).json({ error: "No token provided" });
+        if(!authHeader) return res.status(401).json({ error: "No token provided" });
 
         //The header comes as "Bearer <token>", we separate it
         const token = authHeader.split(" ")[1];
@@ -20,7 +20,7 @@ const authMiddleware = (req, res, next ) => {
         //route protected
         next();
     } catch(error) {
-        res.stattus(401).json({ error: "invalid or expired token" });
+        res.status(401).json({ error: "invalid or expired token" });
     }
 };
 
