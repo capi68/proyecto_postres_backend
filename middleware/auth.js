@@ -14,6 +14,9 @@ const authMiddleware = (req, res, next ) => {
         //Verify token with your secret
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+        console.log("Auth middleware ejecutado, usuario:", decoded);
+
+
         //save data User in req.user
         req.user = decoded;
 

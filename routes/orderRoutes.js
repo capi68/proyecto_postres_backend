@@ -9,43 +9,34 @@ const authMiddleware = require("../middleware/auth");
 router.post("/checkout", authMiddleware, async(req, res) => {
     try {
         const userId = req.user.id;
+        const { address, paymentMethod, items } = req.body;
 
-        //get cartItem User
-        const cartItems = await db.CartItem.findAll({
-            where: { userId },
-            include: [{model: db.Product, as: "product" }],
-        });
-
-        if(!cartItems || cartItems.length === 0) {
-            return res.status(400).json({ error: "Cart is Empty" });
+        if(!items || items.length === 0) {
+            return res.status(400).json({ error: "Cart is Empty or not sent" });
         }
 
         //Calculate total
-        const totalPrice = cartItems.reduce((acc, item) => {
-            return acc + item.quantity * parseFloat(item.product.price);
-        }, 0);
+        const totalPrice = items.reduce((acc, item) => 
+             acc + item.quantity * parseFloat(item.price), 0);
 
         //Create Order
         const order = await db.Order.create({
             userId,
             totalPrice,
             status: "Pending",
-            address: req.body.address,               //from frontend
-            paymentMethod: req.body.payment,         //from frontend
+            address,             //from frontend
+            paymentMethod,       //from frontend
         });
 
         //Create OrderItems
-        const orderItemsData = cartItems.map((item) => ({
+        const orderItemsData = items.map((item) => ({
             orderId: order.id,
             productId: item.productId,
             quantity: item.quantity,
-            price: item.product.price,
+            price: item.price,
         }));
 
         await db.OrderItem.bulkCreate(orderItemsData);
-
-        //Empty Cart
-        await db.CartItem.destroy({where: { userId} });
 
         res.status(201).json({
             message: "order create succesfully",
