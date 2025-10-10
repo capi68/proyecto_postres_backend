@@ -11,7 +11,9 @@ const bcrypt = require("bcryptjs");
 
 router.post("/register", async(req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const email = req.body.email.toLowerCase().trim();
+        const name = req.body.name.toLowerCase().trim();
+        const password = req.body.password;
 
         // verify if User is already exist
         const existingUser = await db.User.findOne({ where: { email } });
@@ -39,7 +41,8 @@ router.post("/register", async(req, res) => {
 //POST /users/login
 router.post("/login", async(req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = req.body.email.toLowerCase().trim();
+        const password = req.body.password;
 
         const user = await db.User.findOne({ where: { email } });
         if(!user) return res.status(404).json({ message: "Usuario no registrado" });
