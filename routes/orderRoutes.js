@@ -9,7 +9,7 @@ const authMiddleware = require("../middleware/auth");
 router.post("/checkout", authMiddleware, async(req, res) => {
     try {
         const userId = req.user.id;
-        const { address, paymentMethod, items } = req.body;
+        const { address, paymentMethod, items, phone, deliveryMethod } = req.body;
 
         if(!items || items.length === 0) {
             return res.status(400).json({ error: "Cart is Empty or not sent" });
@@ -26,6 +26,8 @@ router.post("/checkout", authMiddleware, async(req, res) => {
             status: "Pending",
             address,             //from frontend
             paymentMethod,       //from frontend
+            phone,
+            deliveryMethod,
         });
 
         //Create OrderItems
