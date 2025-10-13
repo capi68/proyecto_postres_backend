@@ -26,8 +26,8 @@ router.post("/checkout", authMiddleware, async(req, res) => {
             status: "Pending",
             address,             //from frontend
             paymentMethod,       //from frontend
-            phone,
-            deliveryMethod,
+            phone,               //from frontend
+            deliveryMethod,      //from frontend
         });
 
         //Create OrderItems
