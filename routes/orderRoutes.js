@@ -25,7 +25,7 @@ router.post("/checkout", authMiddleware, async(req, res) => {
             totalPrice,
             status: "Pending",
             address,             //from frontend
-            paymentMethod,       //from frontend
+            paymentMethod,      //from frontend
             phone,               //from frontend
             deliveryMethod,      //from frontend
         });
@@ -55,10 +55,10 @@ router.post("/checkout", authMiddleware, async(req, res) => {
             ],
         });
 
+        console.log("✅ Full order con relaciones:", JSON.stringify(fullOrder, null, 2));
         res.status(201).json({
             message: "order create succesfully",
-            order,
-            orderItems: fullOrder.orderItems,
+            order:fullOrder,
         });
     } catch(error) {
         console.error("Checkout error details:", error);
