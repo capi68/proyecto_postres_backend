@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const db = require("../models");
 
-const authMiddleware = (req, res, next ) => {
+const authMiddleware = async (req, res, next ) => {
     try {
 
         //read header authorization
@@ -13,9 +14,12 @@ const authMiddleware = (req, res, next ) => {
 
         //Verify token with your secret
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Auth middleware ejecutado, usuario:", decoded);  
 
-        console.log("Auth middleware ejecutado, usuario:", decoded);
-
+        const user = await db.User.findByPk(decoded.id, {
+            attributes: ["id", "name", "email" ],
+        });
+        if (!user) return res.status(404).json({ error: "user not found"}); 
 
         //save data User in req.user
         req.user = decoded;

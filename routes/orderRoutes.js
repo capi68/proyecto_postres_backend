@@ -40,10 +40,25 @@ router.post("/checkout", authMiddleware, async(req, res) => {
 
         await db.OrderItem.bulkCreate(orderItemsData);
 
+        const fullOrder = await db.Order.findByPk(order.id, {
+            include: [
+                {
+                    model: db.User,
+                    as: "user",
+                    attributes: ["name", "email"],
+                },
+                {
+                    model: db.OrderItem,
+                    as: "orderItems",
+                    include: [{ model: db.Product, as: "product", attributes: [ "name", "price"] }],
+                },
+            ],
+        });
+
         res.status(201).json({
             message: "order create succesfully",
             order,
-            orderItems: orderItemsData,
+            orderItems: fullOrder.orderItems,
         });
     } catch(error) {
         console.error("Checkout error details:", error);
