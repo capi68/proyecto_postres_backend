@@ -29,6 +29,7 @@ router.post("/", async (req, res) => {
 // GET all products
 
 router.get("/", async (req, res) => {
+    console.log(" Entró a GET /products");
     try {
         const products = await db.Product.findAll({ where: { active: true } });
         res.json(products);
