@@ -9,15 +9,23 @@ const basename = path.basename(__filename);
 const db = {};
 
 
+// === NUEVO: tomar variables del .env ===
+const {
+  DB_DIALECT = 'postgres',
+  DB_HOST = '127.0.0.1',
+  DB_PORT = '5432',
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD
+} = process.env;
+
+
 const sequelize = new Sequelize(process.env.DB_URL, {
   dialect: 'postgres',
   logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, //Supabase
-    },
-  },
+  dialectOptions: process.env.NODE_ENV === 'production'
+    ? { ssl: { require: true, rejectUnauthorized: false } }
+    : {}
 });
 
 
