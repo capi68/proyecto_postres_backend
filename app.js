@@ -6,35 +6,36 @@ const cors = require("cors");
 const app = express();
 
 // =====================================================
-//  CORS 
+// CORS 
 // =====================================================
-const allowlist = [
+const allowedOrigins = [
   "http://localhost:5173",
-  "https://wikipostres-project.netlify.app/", // 
+  "https://wikipostres-project.netlify.app/", 
 ];
 
-const corsOptions = {
-  origin(origin, callback) {
-    // Permitir si no hay origen (Postman, SSR) o si está en la lista
-    if (!origin || allowlist.includes(origin)) {
-      return callback(null, true);
-    }
-    console.warn("CORS bloqueado para origen:", origin);
-    return callback(new Error("CORS not allowed"), false);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: false,
-  optionsSuccessStatus: 204,
-};
+// Middleware CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      
+      if (!origin) return callback(null, true);
 
-// Aplica CORS global
-app.use(cors(corsOptions));
-// Responde preflight OPTIONS global
-app.options("*", cors(corsOptions));
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.warn("🚫 Bloqueado por CORS:", origin);
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false, 
+  })
+);
 
-// =====================================================
-// Middlewares
+// Respuesta global a preflight
+app.options("*", cors());
+
 // =====================================================
 app.use(bodyParser.json());
 
