@@ -6,36 +6,13 @@ const cors = require("cors");
 const app = express();
 
 // =====================================================
-// CORS 
+//  CORS ABIERTO TEMPORAL (para evitar bloqueos y caídas)
 // =====================================================
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://wikipostres-project.netlify.app/", 
-];
-
-// Middleware CORS
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        console.warn("🚫 Bloqueado por CORS:", origin);
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false, 
-  })
-);
-
-// Respuesta global a preflight
+app.use(cors());
 app.options("*", cors());
 
+// =====================================================
+// Middlewares
 // =====================================================
 app.use(bodyParser.json());
 
@@ -47,4 +24,7 @@ app.use("/users", require("./routes/userRoutes"));
 app.use("/cart", require("./routes/cartRoutes"));
 app.use("/orders", require("./routes/orderRoutes"));
 
+// =====================================================
+// Export app
+// =====================================================
 module.exports = app;
